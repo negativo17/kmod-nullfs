@@ -61,6 +61,24 @@ Requires:   module-init-tools
 This package provides the %{kmod_name} kernel module(s) built for the Linux kernel
 using the family of processors.
 
+%prep
+%autosetup -p1 -n nullfsvfs-%{version}
+
+echo "override %{kmod_name} * weak-updates/%{kmod_name}" > kmod-%{kmod_name}.conf
+
+%build
+make -C %{_usrsrc}/kernels/%{kversion} M=$PWD modules
+
+%install
+export INSTALL_MOD_PATH=%{buildroot}
+export INSTALL_MOD_DIR=extra/%{kmod_name}
+make -C %{_usrsrc}/kernels/%{kversion} M=$PWD modules_install
+
+install -d %{buildroot}%{_sysconfdir}/depmod.d/
+install kmod-%{kmod_name}.conf %{buildroot}%{_sysconfdir}/depmod.d/
+# Remove the unrequired files.
+rm -f %{buildroot}/lib/modules/%{kversion}/modules.*
+
 %post -n kmod-%{kmod_name}
 if [ -e "/boot/System.map-%{kversion}" ]; then
     /usr/sbin/depmod -aeF "/boot/System.map-%{kversion}" "%{kversion}" > /dev/null || :
@@ -83,24 +101,6 @@ if [ -x "/usr/sbin/weak-modules" ]; then
     printf '%s\n' "${modules[@]}" | /usr/sbin/weak-modules --remove-modules
 fi
 
-%prep
-%autosetup -p1 -n nullfsvfs-%{version}
-
-echo "override %{kmod_name} * weak-updates/%{kmod_name}" > kmod-%{kmod_name}.conf
-
-%build
-make -C %{_usrsrc}/kernels/%{kversion} M=$PWD modules
-
-%install
-export INSTALL_MOD_PATH=%{buildroot}
-export INSTALL_MOD_DIR=extra/%{kmod_name}
-make -C %{_usrsrc}/kernels/%{kversion} M=$PWD modules_install
-
-install -d %{buildroot}%{_sysconfdir}/depmod.d/
-install kmod-%{kmod_name}.conf %{buildroot}%{_sysconfdir}/depmod.d/
-
-# Remove the unrequired files.
-rm -f %{buildroot}/lib/modules/%{kversion}/modules.*
 
 %files -n kmod-%{kmod_name}
 %license LICENSE
