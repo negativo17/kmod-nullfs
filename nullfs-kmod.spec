@@ -20,7 +20,7 @@
 
 Name:           %{kmod_name}-kmod
 Version:        0.17
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        A virtual file system that behaves like /dev/null
 License:        GPLv3+
 URL:            https://github.com/abbbi/%{kmod_name}
@@ -108,6 +108,9 @@ fi
 %config /etc/depmod.d/kmod-%{kmod_name}.conf
 
 %changelog
+* Wed Sep 25 2024 Simone Caronni <negativo17@gmail.com> - 0.17-7
+- Rebuild.
+
 * Wed Jun 05 2024 Simone Caronni <negativo17@gmail.com> - 0.17-6
 - Rebuild for latest kernel.
 
