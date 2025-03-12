@@ -2,17 +2,6 @@
 
 %global	debug_package %{nil}
 
-%define __spec_install_post \
-  %{__arch_install_post}\
-  %{__os_install_post}\
-  %{__mod_compress_install_post}
-
-%define __mod_compress_install_post \
-  if [ $kernel_version ]; then \
-    find %{buildroot} -type f -name '*.ko' | xargs %{__strip} --strip-debug; \
-    find %{buildroot} -type f -name '*.ko' | xargs xz; \
-  fi
-
 # Generate kernel symbols requirements:
 %global _use_internal_dependency_generator 0
 
@@ -72,17 +61,20 @@ install kmod-%{kmod_name}.conf %{buildroot}%{_sysconfdir}/depmod.d/
 # Remove the unrequired files.
 rm -f %{buildroot}%{_prefix}/lib/modules/%{kversion}/modules.*
 
+find %{buildroot} -type f -name '*.ko' | xargs %{__strip} --strip-debug
+find %{buildroot} -type f -name '*.ko' | xargs xz
+
 %post
 if [ -e "/boot/System.map-%{kversion}" ]; then
     %{_sbindir}/depmod -aeF "/boot/System.map-%{kversion}" "%{kversion}" > /dev/null || :
 fi
-modules=( $(find %{_prefix}/lib/modules/%{kversion}/extra/%{kmod_name} | grep '\.ko$') )
+modules=( $(find %{_prefix}/lib/modules/%{kversion}/extra/%{kmod_name} | grep '\.ko.xz$') )
 if [ -x "%{_sbindir}/weak-modules" ]; then
     printf '%s\n' "${modules[@]}" | %{_sbindir}/weak-modules --add-modules
 fi
 
 %preun
-rpm -ql kmod-%{kmod_name}-%{version}-%{release} | grep '\.ko$' > %{_var}/run/rpm-kmod-%{kmod_name}-modules
+rpm -ql kmod-%{kmod_name}-%{version}-%{release} | grep '\.ko.xz$' > %{_var}/run/rpm-kmod-%{kmod_name}-modules
 
 %postun
 if [ -e "/boot/System.map-%{kversion}" ]; then
@@ -106,6 +98,7 @@ fi
   for the akmods variant.
 - Use /usr/lib/modules for installing kernel modules and not /lib/modules.
 - Trim changelog.
+- Drop compress macro and just add a step during install.
 
 * Wed Sep 25 2024 Simone Caronni <negativo17@gmail.com> - 0.17-7
 - Rebuild.
