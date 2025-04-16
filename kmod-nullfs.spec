@@ -8,11 +8,11 @@
 %{!?kversion: %global kversion %(uname -r)}
 
 Name:           kmod-%{kmod_name}
-Version:        0.17
-Release:        8%{?dist}
+Version:        0.18
+Release:        1%{?dist}
 Summary:        A virtual file system that behaves like /dev/null
 License:        GPLv3+
-URL:            https://github.com/abbbi/%{kmod_name}
+URL:            https://github.com/abbbi/nullfsvfs
 
 Source0:        %{url}/archive/v%{version}.tar.gz#/nullfsvfs-%{version}.tar.gz
 %if 0%{?rhel} == 9
@@ -93,6 +93,9 @@ fi
 %config %{_sysconfdir}/depmod.d/kmod-%{kmod_name}.conf
 
 %changelog
+* Wed Apr 16 2025 Simone Caronni <negativo17@gmail.com> - 0.18-1
+- Update to 0.18.
+
 * Wed Mar 12 2025 Simone Caronni <negativo17@gmail.com> - 0.17-8
 - Rename source package from nvidia-kmod to kmod-nvidia, the former is now used
   for the akmods variant.
