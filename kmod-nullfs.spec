@@ -16,7 +16,8 @@ URL:            https://github.com/abbbi/nullfsvfs
 
 Source0:        %{url}/archive/v%{version}.tar.gz#/nullfsvfs-%{version}.tar.gz
 %if 0%{?rhel} == 9
-Patch0:         https://github.com/abbbi/nullfsvfs/commit/63661607ded4e3ee0ba35cf50e1166a2b203daeb.patch
+# https://github.com/abbbi/nullfsvfs/commit/63661607ded4e3ee0ba35cf50e1166a2b203daeb
+Patch0:         nullfs-el9.patch
 %endif
 
 BuildRequires:  elfutils-libelf-devel
