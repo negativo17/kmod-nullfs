@@ -1,7 +1,7 @@
-diff -Naur nullfsvfs-0.18.old/nullfs.c nullfsvfs-0.18/nullfs.c
---- nullfsvfs-0.18.old/nullfs.c	2025-04-16 14:51:07.748516991 +0200
-+++ nullfsvfs-0.18/nullfs.c	2025-04-16 14:52:50.931930382 +0200
-@@ -547,35 +547,16 @@
+diff -Naur nullfsvfs-0.19.old/nullfs.c nullfsvfs-0.19/nullfs.c
+--- nullfsvfs-0.19.old/nullfs.c	2025-06-18 15:17:10.312918153 +0200
++++ nullfsvfs-0.19/nullfs.c	2025-06-18 15:19:40.132100015 +0200
+@@ -547,36 +547,16 @@
  #endif
  }
  
@@ -28,10 +28,11 @@ diff -Naur nullfsvfs-0.18.old/nullfs.c nullfsvfs-0.18/nullfs.c
          return -ENOSPC;
 -#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
      d_tmpfile(file, inode);
+     return finish_open_simple(file, 0);
 -#else
 -    d_tmpfile(dentry, inode);
+-    return 0;
 -#endif
-     return finish_open_simple(file, 0);
  }
 -#endif
  
