@@ -1,40 +1,9 @@
-diff -Naur nullfsvfs-0.19.old/nullfs.c nullfsvfs-0.19/nullfs.c
---- nullfsvfs-0.19.old/nullfs.c	2025-06-18 15:17:10.312918153 +0200
-+++ nullfsvfs-0.19/nullfs.c	2025-06-18 15:19:40.132100015 +0200
-@@ -547,36 +547,16 @@
- #endif
- }
+diff -Naur nullfsvfs-0.19.old/Makefile nullfsvfs-0.19/Makefile
+--- nullfsvfs-0.19.old/Makefile	2025-06-18 15:17:10.312653945 +0200
++++ nullfsvfs-0.19/Makefile	2025-09-05 16:32:59.927409176 +0200
+@@ -1,3 +1,5 @@
++EXTRA_CFLAGS += -Wno-incompatible-pointer-types
++
+ obj-m := nullfs.o
  
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 11, 0)
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 3, 0)
--static int nullfs_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
--				struct file *file, umode_t mode)
--#elif LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
- static int nullfs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
- 				struct file *file, umode_t mode)
--#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
--static int nullfs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir, struct dentry *dentry, umode_t mode)
--#else
--static int nullfs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
--#endif
- {
-     struct inode *inode;
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
-     inode = nullfs_get_inode(dir->i_sb, dir, mode, 0, file->f_path.dentry);
--#else
--    inode = nullfs_get_inode(dir->i_sb, dir, mode, 0, dentry);
--#endif
-     if (!inode)
-         return -ENOSPC;
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
-     d_tmpfile(file, inode);
-     return finish_open_simple(file, 0);
--#else
--    d_tmpfile(dentry, inode);
--    return 0;
--#endif
- }
--#endif
- 
- static const struct inode_operations nullfs_dir_inode_operations = {
-     .create     = nullfs_create,
+ all: ko
